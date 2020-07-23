@@ -4,24 +4,20 @@ var flasher = function(game){
 
 flasher.prototype = {
     create: function(){ 
-    	bigLogo = game.add.sprite(0, 0, 'bigLogo');
+    	game.stage.backgroundColor = '#ffffff';
+    	bigLogo = game.add.sprite(0, 0, 'logo');
     	
-    	bigLogo.scale.set(4.75, 4.75);
-        bigLogo.anchor.set(.5, .5);
-        
-        bigLogo.x = game.world.centerX;
-        bigLogo.y = game.world.centerY;
-        
-    	btnFlash = game.add.sprite(600, 125, 'btn_Flasher');
-		btnFlash.scale.set(4.75, 4.75);
-	    btnFlash.inputEnabled = true;
-    	btnFlash.events.onInputDown.add(flash, this);	
+    	light_btn = game.add.sprite(137, 42, 'light_btn');
+	    light_btn.inputEnabled = true;
+	    light_btn.events.onInputDown.add(flash, this);
+	    light_btn.events.onInputUp.add(flash, this);
+		    
     }
 };
 
 function flash(_this){
 	if (!flash_on){
-		_this.tint = 0xf4f87c;
+		_this.tint = 0xf55acc;
 
 		if (isMobile()){
 			window.plugins.flashlight.switchOn();
