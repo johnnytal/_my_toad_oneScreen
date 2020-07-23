@@ -1,5 +1,10 @@
-document.addEventListener("deviceready", startMic, false);
-startMic()
+if (isMobile()){
+	document.addEventListener("deviceready", startMic, false);
+}
+else{
+	startMic();
+}
+
 const canvas = document.getElementsByTagName('canvas')[0];
 resizeCanvas();
 
@@ -19,7 +24,7 @@ let config = {
     SHADING: true,
     COLORFUL: true,
     COLOR_UPDATE_SPEED: 45,
-    BACK_COLOR: { r: 255, g: 255, b: 255 },
+    BACK_COLOR: { r: 0, g: 0, b: 0 },
     TRANSPARENT: false,
     BLOOM: false,
     BLOOM_ITERATIONS: 8,
@@ -224,10 +229,6 @@ function startGUI () {
     captureFolder.add(config, 'TRANSPARENT').name('transparent');
 
     if (isMobile()) gui.close();
-}
-
-function isMobile () {
-    return /Mobi|Android/i.test(navigator.userAgent);
 }
 
 function framebufferToTexture (target) {
