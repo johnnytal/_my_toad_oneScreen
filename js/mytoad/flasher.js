@@ -6,14 +6,30 @@ flasher.prototype = {
     create: function(){ 
     	game.stage.backgroundColor = '#ffffff';
     	bigLogo = game.add.sprite(0, 0, 'logo');
-    	
+
     	light_btn = game.add.sprite(137, 42, 'light_btn');
 	    light_btn.inputEnabled = true;
 	    light_btn.events.onInputDown.add(flash, this);
 	    light_btn.events.onInputUp.add(flash, this);
-		    
+	   
+	   /*setTimeout(function() {
+		    // Get the head tag
+		    var head_ID = document.getElementsByTagName("head")[0]; 
+		    // Create script element       
+		    var script_element = document.createElement('script');
+		    // Set the script type to JavaScript
+		    script_element.type = 'text/javascript';
+		    // External JS file
+		    script_element.src = 'js/mytoad/visualizer.js';
+		    head_ID.appendChild(script_element);
+		
+		}, 2000);*/
     }
+    
+    
 };
+
+
 
 function flash(_this){
 	if (!flash_on){

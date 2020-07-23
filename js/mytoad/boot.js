@@ -5,7 +5,7 @@ function start(){
     WIDTH = 360; 
     HEIGHT = 616; 
 
-    game = new Phaser.Game(WIDTH, HEIGHT, Phaser.CANVAS, "container");  
+    game = new Phaser.Game(WIDTH, HEIGHT, Phaser.WEBGL, "game", null, true);  
 
     game.state.add("Boot", boot);
     game.state.add("Preloader", preloader);
