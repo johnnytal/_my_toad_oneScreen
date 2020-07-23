@@ -34,10 +34,12 @@ boot.prototype = {
         else {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
-            //this.scale.maxWidth = window.innerWidth * window.devicePixelRatio;
+			this.scale.minWidth = window.innerWidth * window.devicePixelRatio;
+			this.scale.minHeight = (window.innerWidth * window.devicePixelRatio) * (HEIGHT / WIDTH);
+            //this.scale.maxWidth = ;
            // this.scale.maxHeight = window.innerHeight * window.devicePixelRatio;
             
-            this.scale.forceOrientation(false, true);
+            //this.scale.forceOrientation(false, true);
         }
         
         game.state.start("Preloader"); 
