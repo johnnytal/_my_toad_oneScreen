@@ -4,41 +4,24 @@ var flasher = function(game){
 
 flasher.prototype = {
     create: function(){ 
-    	game.stage.backgroundColor = '#ffffff';
     	bigLogo = game.add.sprite(0, 0, 'logo');
 
-    	light_btn = game.add.sprite(137, 42, 'light_btn');
+    	light_btn = game.add.sprite(137, 41, 'light_btn');
 	    light_btn.inputEnabled = true;
 	    light_btn.events.onInputDown.add(flash, this);
 	    light_btn.events.onInputUp.add(flash, this);
-	   
-	   /*setTimeout(function() {
-		    // Get the head tag
-		    var head_ID = document.getElementsByTagName("head")[0]; 
-		    // Create script element       
-		    var script_element = document.createElement('script');
-		    // Set the script type to JavaScript
-		    script_element.type = 'text/javascript';
-		    // External JS file
-		    script_element.src = 'js/mytoad/visualizer.js';
-		    head_ID.appendChild(script_element);
-		
-		}, 2000);*/
-    }
-    
-    
+    }   
 };
 
 
 
 function flash(_this){
 	if (!flash_on){
-		_this.tint = 0xf55acc;
-
 		if (isMobile()){
 			window.plugins.flashlight.switchOn();
 		}
 		
+		_this.tint = 0xf55acc;
 		flash_on = true;
 	}
 	else{
@@ -47,11 +30,9 @@ function flash(_this){
 		}
 
 		_this.tint = 0xffffff;
-		
 		flash_on = false;
 	}
 }
-
 
 
 /* general functions */
@@ -97,61 +78,6 @@ function loadSounds(){
     note10 = game.add.audio('A4');
     note11 = game.add.audio('Bb4');
     note12 = game.add.audio('B4');
-}
-
-function initState(_color){    	
-	bg = game.add.image(0, 0, 'bg');
-	bg.alpha = 0.8;
-
-	game.stage.backgroundColor = _color;
-    	
-    buttons = game.add.group();
-    
-    for (n = 0; n < btn_keys.length; n++){
-    	btn = buttons.create(10 + (n % 3) * (WIDTH / 3), 800, btn_keys[n]);
-    	if (n <= 2) btn.y = HEIGHT - btn.height * 2 - 70;
-    	else { btn.y = HEIGHT - btn.height - 40; }
-    	
-    	btn.scale.set(1, 1.15);
-    	
-        btn.inputEnabled = true;
-	    btn.events.onInputDown.add(goToState, this);
-	    
-	    if (btn_keys[n].slice(4) == state){
-	    	btn.tint = CHOSEN_TINT;
-	    }
-    }
-    
-	game.add.image(0,  HEIGHT - btn.height - 160, 'seperator').scale.set(4, 1.5);
-}
-
-function goToState(_this){    
-    click4.play();
-    
-	if (isMobile()){
-		navigator.vibrate(0);
-
-		if (game.state.getCurrentState().key == 'Flasher'){
-			resetFlickerTimer();
-			flash_on = false;
-			flicker_on = false;
-		}
-		
-		if (window.plugins.flashlight.isSwitchedOn()){
-			window.plugins.flashlight.switchOff();
-		}
-	}
-	
-	if (game.state.getCurrentState().key == 'Shaker'){
-		gui.destroy();
-	}
-	
-	if (game.state.getCurrentState().key == 'Riddles'){
-		try{clearTimeout(riddleTimer);} catch(e){};
-	}
-
-	state = _this.key.slice(4);
-    game.state.start(state);
 }
 
 function converToHex(_color){
