@@ -27,8 +27,8 @@ boot.prototype = {
         else {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
-			this.scale.minWidth = window.innerWidth * window.devicePixelRatio;
-			this.scale.minHeight = window.innerWidth * window.devicePixelRatio;
+			this.scale.maxWidth = window.innerWidth * window.devicePixelRatio;
+			this.scale.maxHeight = window.innerWidth * window.devicePixelRatio;
 
             this.scale.forceOrientation(false, true);
         }
