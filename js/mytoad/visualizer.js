@@ -11,9 +11,9 @@ resizeCanvas();
 var averageValue;
 
 let config = {
-    SIM_RESOLUTION: 128,
-    DYE_RESOLUTION: 512,
-    CAPTURE_RESOLUTION: 128,
+    SIM_RESOLUTION: 64,
+    DYE_RESOLUTION: 256,
+    CAPTURE_RESOLUTION: 64,
     DENSITY_DISSIPATION: 1,
     VELOCITY_DISSIPATION: 0.2,
     PRESSURE: 0.8,
@@ -1105,8 +1105,8 @@ function resizeCanvas () {
     let width = scaleByPixelRatio(canvas.clientWidth);
     let height = scaleByPixelRatio(canvas.clientHeight);
    // if (canvas.width != width || canvas.height != height) {
-        canvas.width = 409;
-        canvas.height = 699;
+        canvas.width = 360;
+        canvas.height = 616;
         return true;
    // }
     return false;
