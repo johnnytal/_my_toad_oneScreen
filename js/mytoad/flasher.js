@@ -7,6 +7,11 @@ var flasher = function(game){
 	circlesArray = [];
 	
 	visherOn = true;
+	
+	GO_ANGLE = 25;
+	AccelX = 0;
+	HU_STATE = false;
+	HA_STATE = false;
 };
 
 flasher.prototype = {
@@ -16,7 +21,6 @@ flasher.prototype = {
 	    
 		bgHot = game.add.image(0, 0, 'gradientHot');
 		bgCold = game.add.image(0, 0, 'gradientCold');
-
 
 	    bgW.alpha = 0;
 	    
@@ -56,15 +60,27 @@ flasher.prototype = {
     	window.addEventListener("devicemotion", readVisherAccel, true);
 
     }, 
-    update: function(){}     
+    update: function(){
+    	if (AccelX * 3 < -GO_ANGLE && !HU_STATE){
+			toad1Sfx.play();
+
+			HA_STATE = false;
+			HU_STATE = true;
+		}
+    	
+    	else if (AccelX * 3 > GO_ANGLE && !HA_STATE){    		
+			toad2Sfx.play();
+
+			HA_STATE = true;
+			HU_STATE = false;
+		}
+    }     
 };
 
 function readVisherAccel(event){
 	if (visherOn){
-		var AccelX = event.accelerationIncludingGravity.x;
-		
-		//bigLogo.angle = AccelX;
-		
+		AccelX = event.accelerationIncludingGravity.x;
+
 		var alphaVal = (AccelX + 10) / 20;
 		if (alphaVal < 0) alphaVal = 0;
 		else if (alphaVal > 1) alphaVal = 1;
@@ -98,6 +114,8 @@ function startMic(){
 
 function distributeEmpty(){
 	circles = game.add.group();
+    circles.enableBody = true;
+    circles.physicsBodyType = Phaser.Physics.ARCADE;
 
 	circlesArray[0] = circles.create(40, 135, 'empty');
 	circlesArray[1] = circles.create(45, 440, 'empty');
@@ -212,6 +230,8 @@ function droppingLogos(StartX, velY){
 
 function loadSounds(){   
 	sound_logo = game.add.audio('sound_logo');
+	toad1Sfx = game.add.audio('toad1Sfx');
+	toad2Sfx = game.add.audio('toad2Sfx');
 }
 
 function converToHex(_color){

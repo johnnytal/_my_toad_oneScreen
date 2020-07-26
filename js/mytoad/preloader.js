@@ -21,6 +21,8 @@ preloader.prototype = {
         game.load.image('gradientCold', 'assets/mytoad/images/color-gradient-background_cold.jpg');
 
         game.load.audio('sound_logo', 'assets/mytoad/audio/sound_logo.mp3');
+        game.load.audio('toad1', 'assets/mytoad/audio/toad1.mp3');
+        game.load.audio('toad2', 'assets/mytoad/audio/toad2.mp3');
     },
     
     create: function(){
