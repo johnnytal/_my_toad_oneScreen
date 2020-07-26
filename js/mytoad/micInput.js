@@ -71,9 +71,9 @@ function start_microphone(stream){
 
              for (var i = 0; i < array.length; i++) {
             	 averageValue += array[i];
-            	 try{
+            	 if (i < 6){
             	 	circlesArray[i].scale.set(array[(i + 2) * 2] / 100, array[(i + 2) * 2] / 100);
-            	 } catch(e){}
+            	 }
              }
              
              averageValue = averageValue / array.length - 1;

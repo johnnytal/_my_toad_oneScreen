@@ -5,12 +5,22 @@ var flasher = function(game){
 	TINT_COLOR = 0xf55acc;
 	
 	circlesArray = [];
+	
+	visherOn = true;
 };
 
 flasher.prototype = {
     create: function(){ 
-    		   	    
-	    distributeEmpty();
+	    bgB = game.add.image(0, 0, 'black');
+	    bgW = game.add.image(0, 0, 'white');
+	    
+		bgHot = game.add.image(0, 0, 'gradientHot');
+		bgCold = game.add.image(0, 0, 'gradientCold');
+
+
+	    bgW.alpha = 0;
+	    
+        distributeEmpty();
 	     
     	bigLogo = game.add.sprite(0, 0, 'logo');
 
@@ -42,10 +52,27 @@ flasher.prototype = {
 				getDevices();
 			}, 500);
     	}
+    	
+    	window.addEventListener("devicemotion", readVisherAccel, true);
 
     }, 
     update: function(){}     
 };
+
+function readVisherAccel(event){
+	if (visherOn){
+		var AccelX = event.accelerationIncludingGravity.x;
+		
+		//bigLogo.angle = AccelX;
+		
+		var alphaVal = (AccelX + 10) / 20;
+		if (alphaVal < 0) alphaVal = 0;
+		else if (alphaVal > 1) alphaVal = 1;
+		
+		bgHot.alpha = alphaVal - 0.2;
+		bgCold.alpha = 1 - alphaVal - 0.2;
+	}
+}
 
 function startMic(){
 	try{
@@ -123,6 +150,10 @@ function stopFlicker(_this){
 		clearInterval(flicker_interval);
 		flicker_interval = null;
 	}
+	
+	if (window.plugins.flashlight.isSwitchedOn()){
+		window.plugins.flashlight.switchOff();
+	}
 }
 
 function play_sound(_this){
@@ -144,14 +175,9 @@ function flash(_this){
 		flash_on = true;
 		
 		value = 0;
-		
-		whitenInterval = setInterval(function(){
-	  	 	game.stage.backgroundColor = 'rgba(' + value + ', ' + value + ',' + value + ',' + 1 + ')';
-	  	 	if (value < 255) value += 3;
-	  	 	else{
-	  	 		clearInterval(whitenInterval);
-	  	 	}
-		}, 2);
+	    
+	    game.add.tween(bgW).to( { alpha: 1 }, 200, "Linear", true);
+	    game.add.tween(bgB).to( { alpha: 0 }, 0, "Linear", true);
   	    
 	}
 	else{
@@ -160,14 +186,9 @@ function flash(_this){
 		}
 		
 		value = 255;
-		
-		blackenInterval = setInterval(function(){
-	  	 	game.stage.backgroundColor = 'rgba(' + value + ', ' + value + ',' + value + ',' + 1 + ')';
-	  	 	if (value > 0) value -= 3;
-	  	 	else{
-	  	 		clearInterval(blackenInterval);
-	  	 	}
-		}, 2);
+
+	    game.add.tween(bgW).to( { alpha: 0 }, 200, "Linear", true);
+	    game.add.tween(bgB).to( { alpha: 1 }, 0, "Linear", true);
 
 		_this.tint = 0xffffff;
 		flash_on = false;
