@@ -1,19 +1,138 @@
 var flasher = function(game){
 	flash_on = false;
+	flicker_interval = null;
+	flickingRate = 200;
+	TINT_COLOR = 0xf55acc;
+	
+	circlesArray = [];
 };
 
 flasher.prototype = {
     create: function(){ 
+    		   	    
+	    distributeEmpty();
+	     
     	bigLogo = game.add.sprite(0, 0, 'logo');
 
     	light_btn = game.add.sprite(137, 41, 'light_btn');
 	    light_btn.inputEnabled = true;
 	    light_btn.events.onInputDown.add(flash, this);
 	    light_btn.events.onInputUp.add(flash, this);
-    }   
+    	
+    	vibrate_btn = game.add.sprite(160, 170, 'vibrate_btn');
+	    vibrate_btn.inputEnabled = true;
+	    vibrate_btn.events.onInputDown.add(goVibrate, this);
+	    vibrate_btn.events.onInputUp.add(stopVibrate, this);
+    	
+    	flicker_btn = game.add.sprite(237, 28, 'flicker_btn');
+	    flicker_btn.inputEnabled = true;
+	    flicker_btn.events.onInputDown.add(goFlicker, this);
+	    flicker_btn.events.onInputUp.add(stopFlicker, this);
+	    
+    	sound_btn = game.add.sprite(24, 20, 'sound_btn');
+    	sound_btn.tint = 0x79d0e2;
+	    sound_btn.inputEnabled = true;
+	    sound_btn.events.onInputDown.add(play_sound, this);
+	    
+    	if (isMobile()){
+    		startMic();
+    	}
+    	else{
+			setTimeout(function(){
+				getDevices();
+			}, 500);
+    	}
+
+    }, 
+    update: function(){}     
 };
 
+function startMic(){
+	try{
+		window.audioinput.checkMicrophonePermission(function(hasPermission) {
+			if (hasPermission){
+				webaudio_tooling_obj();
+			}
+		    else{
+		        window.audioinput.getMicrophonePermission(function(hasPermission, message) {
+		        	if (hasPermission) {
+						webaudio_tooling_obj();		
+		        	}
+		        	else{
+		        		alert('Microphone permission needed for app to work!');
+		        	}
+		        });
+		    }
+		});
+	} catch(e){
+		alert('Please give microphone permission via Settings > Apps ' + e);
+	}  
+}
 
+function distributeEmpty(){
+	circles = game.add.group();
+
+	circlesArray[0] = circles.create(40, 135, 'empty');
+	circlesArray[1] = circles.create(45, 440, 'empty');
+	circlesArray[2] = circles.create(140, 410, 'empty');
+	circlesArray[3] = circles.create(50, 560, 'empty');
+	circlesArray[4] = circles.create(312, 130, 'empty');
+	circlesArray[5] = circles.create(275, 305, 'empty');
+
+	for (var i=0; i < circlesArray.length; i++) {
+		circlesArray[i].alpha = 0;
+		circlesArray[i].anchor.set(.5, .5);
+		circlesArray[i].tint = 0xffffff * Math.random();
+	};	
+}
+
+function goVibrate(_this){
+	if (isMobile()) navigator.vibrate(120000);
+	_this.tint = TINT_COLOR;
+	game.camera.shake(0.003, 120000);
+}
+
+function stopVibrate(_this){
+	if (isMobile()) navigator.vibrate(0);		
+	_this.tint = 0xffffff;
+	game.camera.shake(0, 0);	
+}
+
+function goFlicker(_this){
+	_this.tint = TINT_COLOR;
+
+	flicker_interval = setInterval(function(){
+		if (window.plugins.flashlight.isSwitchedOn()){
+			window.plugins.flashlight.switchOff();
+			navigator.vibrate(0);
+			game.camera.shake(0, 0);
+		}
+		else{
+			window.plugins.flashlight.switchOn();
+			navigator.vibrate(flickingRate);
+			game.camera.flash(0xffffff, flickingRate);
+			game.camera.shake(0.003, flickingRate);
+		}
+	}, flickingRate);
+}
+
+function stopFlicker(_this){
+	_this.tint = 0xffffff;
+	
+	if (flicker_interval != null){
+		clearInterval(flicker_interval);
+		flicker_interval = null;
+	}
+}
+
+function play_sound(_this){
+	_this.tint = TINT_COLOR;
+	soundToPlay = sound_logo.play();
+	
+	setTimeout(function(){
+    	 _this.tint = 0x79d0e2;
+    }, soundToPlay.durationMS); 
+}
 
 function flash(_this){
 	if (!flash_on){
@@ -21,63 +140,57 @@ function flash(_this){
 			window.plugins.flashlight.switchOn();
 		}
 		
-		_this.tint = 0xf55acc;
+		_this.tint = TINT_COLOR;
 		flash_on = true;
+		
+		value = 0;
+		
+		whitenInterval = setInterval(function(){
+	  	 	game.stage.backgroundColor = 'rgba(' + value + ', ' + value + ',' + value + ',' + 1 + ')';
+	  	 	if (value < 255) value += 3;
+	  	 	else{
+	  	 		clearInterval(whitenInterval);
+	  	 	}
+		}, 2);
+  	    
 	}
 	else{
 		if (isMobile()){
 			window.plugins.flashlight.switchOff();
 		}
+		
+		value = 255;
+		
+		blackenInterval = setInterval(function(){
+	  	 	game.stage.backgroundColor = 'rgba(' + value + ', ' + value + ',' + value + ',' + 1 + ')';
+	  	 	if (value > 0) value -= 3;
+	  	 	else{
+	  	 		clearInterval(blackenInterval);
+	  	 	}
+		}, 2);
 
 		_this.tint = 0xffffff;
 		flash_on = false;
 	}
 }
 
+function droppingLogos(StartX, velY){
+	logoDrop = game.add.sprite(StartX, 0, 'drop');
+	
+	logoDrop.tint = 0xffffff * Math.random();
+	
+	game.physics.enable(logoDrop, Phaser.Physics.ARCADE);
+    
+    logoDrop.body.velocity.setTo(0, velY);
+
+    tween = game.add.tween(logoDrop).to( { alpha: 0 }, 5000, "Linear", true);
+    tween.onComplete.add(function(){ logoDrop.destroy; }, this);
+}
 
 /* general functions */
 
 function loadSounds(){   
 	sound_logo = game.add.audio('sound_logo');
-	
-	huSfx = game.add.audio('hu', 1);
-	haSfx = game.add.audio('ha', 1);
-
-	shakerFsfx = game.add.audio('front', 1);
-	shakerBsfx = game.add.audio('back', 1);
-	bellFsfx = game.add.audio('c', 1);
-	bellBsfx = game.add.audio('g', 1);
-	
-    click1 = game.add.audio('clanck', 0.2);
-    click2 = game.add.audio('clap', 0.2);
-    click3 = game.add.audio('scrape', 0.2);
-    click4 = game.add.audio('snap', 0.2);
-
-    sfx1 = game.add.audio('bd', 1);
-    sfx2 = game.add.audio('clanck', 1);
-    sfx3 = game.add.audio('clap', 1);
-    sfx4 = game.add.audio('cymble', 1);
-    sfx5 = game.add.audio('hh', 1);
-    sfx6 = game.add.audio('snr', 1);
-    sfx7 = game.add.audio('pluck', 1);
-    sfx8 = game.add.audio('scrape', 1);
-    sfx9 = game.add.audio('snap', 1);
-    sfx10 = game.add.audio('vox1', 1);
-    sfx11 = game.add.audio('vox2', 1);
-    sfx12 = game.add.audio('vox3', 1); 
-    
-    note1 = game.add.audio('C4');
-    note2 = game.add.audio('Db4');
-    note3 = game.add.audio('D4');
-    note4 = game.add.audio('Eb4');
-    note5 = game.add.audio('E4');
-    note6 = game.add.audio('F4');
-    note7 = game.add.audio('Gb4');
-    note8 = game.add.audio('G4');
-    note9 = game.add.audio('Ab4');
-    note10 = game.add.audio('A4');
-    note11 = game.add.audio('Bb4');
-    note12 = game.add.audio('B4');
 }
 
 function converToHex(_color){

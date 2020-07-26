@@ -69,24 +69,29 @@ function start_microphone(stream){
 	      	 array = new Uint8Array(analyserNode.frequencyBinCount);
 	      	 analyserNode.getByteFrequencyData(array);
 
-             for (var i = 0; i < array.length - 1; i++) {
+             for (var i = 0; i < array.length; i++) {
             	 averageValue += array[i];
+            	 try{
+            	 	circlesArray[i].scale.set(array[(i + 2) * 2] / 100, array[(i + 2) * 2] / 100);
+            	 } catch(e){}
              }
              
              averageValue = averageValue / array.length - 1;
-              
-             splats_n = parseInt(Math.round(averageValue / 25));
-             
              largestValue = Math.max.apply(null, array);
              largestFreq = array.indexOf(largestValue);
-
-             if (splats_n >= 1){
-                multipleSplats(splats_n);
+             
+             for (var i = 0; i < circlesArray.length; i++) {
+             	circlesArray[i].alpha = 0.2 + averageValue / 10;
              }
              
-             config.SPLAT_RADIUS = largestValue / 200;
-             config.CURL = largestFreq * 4.5;
-             if (config.CURL > 150) config.CURL = 150;
+             /*if (averageValue > 4){
+             	droppingLogos(largestFreq * (game.scale.width / 120), averageValue * 32);
+			 }*/
+	   	 	/* value = Math.round(averageValue * 8);
+	  	 	 if (value > 255) value = 255;
+	  	 	 else if (value < 0) value = 0;
+	
+	  	 	 game.stage.backgroundColor = 'rgba(' + value + ', ' + value + ',' + value + ',' + 1 + ')';*/ 
          };      
      }
 

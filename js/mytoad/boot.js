@@ -1,11 +1,11 @@
-//window.onload = start;
+window.onload = start;
 document.addEventListener("deviceready", start, false);
 
 function start(){
     WIDTH = 360; 
     HEIGHT = 616; 
 
-    game = new Phaser.Game(WIDTH, HEIGHT, Phaser.WEBGL, "game", null, true);  
+    game = new Phaser.Game(WIDTH, HEIGHT, Phaser.WEBGL, "game", null, false);  
 
     game.state.add("Boot", boot);
     game.state.add("Preloader", preloader);
