@@ -82,7 +82,7 @@ function start_microphone(stream){
              
              for (var i = 0; i < circlesArray.length; i++) {
              	circlesArray[i].alpha = 0.2 + averageValue / 10;
-             	circlesArray[i].body.gravity.x = AccelX;
+             	circlesArray[i].body.velocity.x = -AccelX;
              }
              
              /*if (averageValue > 4){
