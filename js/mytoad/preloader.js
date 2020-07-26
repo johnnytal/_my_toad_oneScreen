@@ -19,10 +19,12 @@ preloader.prototype = {
         
         game.load.image('gradientHot', 'assets/mytoad/images/color-gradient-background.jpg');
         game.load.image('gradientCold', 'assets/mytoad/images/color-gradient-background_cold.jpg');
+        game.load.image('wiper', 'assets/mytoad/images/wiper.png');
 
         game.load.audio('sound_logo', 'assets/mytoad/audio/sound_logo.mp3');
         game.load.audio('toad1Sfx', 'assets/mytoad/audio/toad1.mp3');
         game.load.audio('toad2Sfx', 'assets/mytoad/audio/toad2.mp3');
+        game.load.audio('clapSfx', 'assets/mytoad/audio/clap.wav');
     },
     
     create: function(){

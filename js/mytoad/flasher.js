@@ -25,7 +25,7 @@ flasher.prototype = {
 	    bgW.alpha = 0;
 	    
         distributeEmpty();
-	     
+        
     	bigLogo = game.add.sprite(0, 0, 'logo');
 
     	light_btn = game.add.sprite(137, 41, 'light_btn');
@@ -48,6 +48,18 @@ flasher.prototype = {
 	    sound_btn.inputEnabled = true;
 	    sound_btn.events.onInputDown.add(play_sound, this);
 	    
+    	wiper_btn = game.add.sprite(100, 470, 'empty');
+	    wiper_btn.inputEnabled = true;
+	   // wiper_btn.events.onInputDown.add(toggleVisher, this);
+    	wiper_btn.tint = 0xbc85f9;
+ 
+    	wiper = game.add.sprite(0, 0, 'wiper');
+    	wiper.tint = 0xff0042;
+    	wiper.scale.set(0.3, 0.1);
+        wiper.y = 536;
+        wiper.x = 135;
+        wiper.anchor.set(.5, 1);
+	    
     	if (isMobile()){
     		startMic();
     	}
@@ -58,18 +70,23 @@ flasher.prototype = {
     	}
     	
     	window.addEventListener("devicemotion", readVisherAccel, true);
-
+    	
+    	soundToPlay = sound_logo.play();
     }, 
     update: function(){
-    	if (AccelX * 3 < -GO_ANGLE && !HU_STATE){
+    	if (wiper.angle < -GO_ANGLE && !HU_STATE){
 			toad1Sfx.play();
+			
+	    	wiper_btn.tint = 0x79d0e2;
 
 			HA_STATE = false;
 			HU_STATE = true;
 		}
     	
-    	else if (AccelX * 3 > GO_ANGLE && !HA_STATE){    		
+    	else if (wiper.angle > GO_ANGLE && !HA_STATE){    		
 			toad2Sfx.play();
+			
+	    	wiper_btn.tint = 0x35ff00;
 
 			HA_STATE = true;
 			HU_STATE = false;
@@ -80,6 +97,8 @@ flasher.prototype = {
 function readVisherAccel(event){
 	if (visherOn){
 		AccelX = event.accelerationIncludingGravity.x;
+
+		wiper.angle = AccelX * 3;
 
 		var alphaVal = (AccelX + 10) / 20;
 		if (alphaVal < 0) alphaVal = 0;
@@ -176,11 +195,12 @@ function stopFlicker(_this){
 
 function play_sound(_this){
 	_this.tint = TINT_COLOR;
-	soundToPlay = sound_logo.play();
+	
+	clapSfx.play();
 	
 	setTimeout(function(){
     	 _this.tint = 0x79d0e2;
-    }, soundToPlay.durationMS); 
+    }, clapSfx.durationMS); 
 }
 
 function flash(_this){
@@ -212,7 +232,7 @@ function flash(_this){
 		flash_on = false;
 	}
 }
-
+/*
 function droppingLogos(StartX, velY){
 	logoDrop = game.add.sprite(StartX, 0, 'drop');
 	
@@ -224,12 +244,13 @@ function droppingLogos(StartX, velY){
 
     tween = game.add.tween(logoDrop).to( { alpha: 0 }, 5000, "Linear", true);
     tween.onComplete.add(function(){ logoDrop.destroy; }, this);
-}
+}*/
 
 /* general functions */
 
 function loadSounds(){   
 	sound_logo = game.add.audio('sound_logo');
+	clapSfx = game.add.audio('clapSfx');
 	toad1Sfx = game.add.audio('toad1Sfx');
 	toad2Sfx = game.add.audio('toad2Sfx');
 }

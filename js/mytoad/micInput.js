@@ -82,17 +82,8 @@ function start_microphone(stream){
              
              for (var i = 0; i < circlesArray.length; i++) {
              	circlesArray[i].alpha = 0.2 + averageValue / 10;
-             	circlesArray[i].body.velocity.x = -AccelX;
+             	//circlesArray[i].body.velocity.x = -AccelX;
              }
-             
-             /*if (averageValue > 4){
-             	droppingLogos(largestFreq * (game.scale.width / 120), averageValue * 32);
-			 }*/
-	   	 	/* value = Math.round(averageValue * 8);
-	  	 	 if (value > 255) value = 255;
-	  	 	 else if (value < 0) value = 0;
-	
-	  	 	 game.stage.backgroundColor = 'rgba(' + value + ', ' + value + ',' + value + ',' + 1 + ')';*/ 
          };      
      }
 
