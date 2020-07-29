@@ -232,19 +232,6 @@ function flash(_this){
 		flash_on = false;
 	}
 }
-/*
-function droppingLogos(StartX, velY){
-	logoDrop = game.add.sprite(StartX, 0, 'drop');
-	
-	logoDrop.tint = 0xffffff * Math.random();
-	
-	game.physics.enable(logoDrop, Phaser.Physics.ARCADE);
-    
-    logoDrop.body.velocity.setTo(0, velY);
-
-    tween = game.add.tween(logoDrop).to( { alpha: 0 }, 5000, "Linear", true);
-    tween.onComplete.add(function(){ logoDrop.destroy; }, this);
-}*/
 
 /* general functions */
 
@@ -266,7 +253,7 @@ function isMobile(){
 function initPlugIns(){
     try{window.plugins.insomnia.keepAwake();} catch(e){} // keep device awake
     try{StatusBar.hide();} catch(e){} // hide status bar
-    try{window.androidVolume.setMusic(50, false);} catch(e){} // change device media volume to maximum
+    try{window.androidVolume.setMusic(80, false);} catch(e){} // change device media volume to maximum
 }
 
 function roundIt(_num){
