@@ -5,6 +5,8 @@ var flasher = function(game){
 	TINT_COLOR = 0xf55acc;
 	
 	circlesArray = [];
+	soundBtns = [];
+	soundBtnsTints = [0x79d0e2, 0x1ed760, 0xc3e347, 0xff82d4];
 	
 	visherOn = true;
 	
@@ -43,11 +45,23 @@ flasher.prototype = {
 	    flicker_btn.events.onInputDown.add(goFlicker, this);
 	    flicker_btn.events.onInputUp.add(stopFlicker, this);
 	    
-    	sound_btn = game.add.sprite(24, 20, 'sound_btn');
-    	sound_btn.tint = 0x79d0e2;
-	    sound_btn.inputEnabled = true;
-	    sound_btn.events.onInputDown.add(play_sound, this);
-	    
+    	game.input.addPointer();
+    	game.input.addPointer();
+    	
+        soundBtnsGroup = game.add.physicsGroup(Phaser.Physics.ARCADE);
+    	
+    	soundBtns[0] = soundBtnsGroup.create(24, 20, 'sound_btn');
+    	soundBtns[1] = soundBtnsGroup.create(16, 184, 'sound_btn');
+    	soundBtns[2] = soundBtnsGroup.create(44, 315, 'sound_btn');
+    	soundBtns[3] = soundBtnsGroup.create(221, 382, 'sound_btn');
+ 
+	 	for (s = 0; s < soundBtnsTints.length; s++){
+		    soundBtns[s].tint = soundBtnsTints[s];
+		    soundBtns[s].inputEnabled = true;
+	    	soundBtns[s].events.onInputDown.add(play_sound, this);
+	    	soundBtns[s].events.onInputUp.add(stop_sound, this);	
+	 	}
+
     	wiper_btn = game.add.sprite(100, 470, 'empty');
 	    wiper_btn.inputEnabled = true;
 	   // wiper_btn.events.onInputDown.add(toggleVisher, this);
@@ -195,12 +209,13 @@ function stopFlicker(_this){
 
 function play_sound(_this){
 	_this.tint = TINT_COLOR;
-	
 	clapSfx.play();
-	
-	setTimeout(function(){
-    	 _this.tint = 0x79d0e2;
-    }, clapSfx.durationMS); 
+}
+
+function stop_sound(_this){
+	num = soundBtns.indexOf(_this);
+	_this.tint = soundBtnsTints[num];
+	clapSfx.stop(); 
 }
 
 function flash(_this){
@@ -237,7 +252,7 @@ function flash(_this){
 
 function loadSounds(){   
 	sound_logo = game.add.audio('sound_logo');
-	clapSfx = game.add.audio('clapSfx');
+	clapSfx = game.add.audio('clapSfx', true);
 	toad1Sfx = game.add.audio('toad1Sfx');
 	toad2Sfx = game.add.audio('toad2Sfx');
 }
