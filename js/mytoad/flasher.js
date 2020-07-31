@@ -207,15 +207,17 @@ function stopFlicker(_this){
 	}
 }
 
-function play_sound(_this){
+function play_sound(_this){	
 	_this.tint = TINT_COLOR;
-	clapSfx.play();
+	
+	var num = soundBtns.indexOf(_this);
+	allSounds[num].play();
 }
 
 function stop_sound(_this){
-	num = soundBtns.indexOf(_this);
+	var num = soundBtns.indexOf(_this);
 	_this.tint = soundBtnsTints[num];
-	clapSfx.stop(); 
+	allSounds[num].stop(); 
 }
 
 function flash(_this){
@@ -252,9 +254,12 @@ function flash(_this){
 
 function loadSounds(){   
 	sound_logo = game.add.audio('sound_logo');
-	clapSfx = game.add.audio('clapSfx', true);
-	toad1Sfx = game.add.audio('toad1Sfx');
-	toad2Sfx = game.add.audio('toad2Sfx');
+	clapSfx = game.add.audio('clapSfx', 1, true);
+	toad1Sfx = game.add.audio('toad1Sfx', 1, true);
+	toad2Sfx = game.add.audio('toad2Sfx', 1, true);
+	booSfx = game.add.audio('booSfx', 1, true);
+	
+	allSounds = [clapSfx, toad1Sfx, toad2Sfx, booSfx];
 }
 
 function converToHex(_color){
