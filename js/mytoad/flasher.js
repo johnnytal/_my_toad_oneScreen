@@ -208,14 +208,15 @@ function stopFlicker(_this){
 }
 
 function play_sound(_this){	
-	_this.tint = TINT_COLOR;
-	
 	var num = soundBtns.indexOf(_this);
+	
+	_this.tint =  soundBtnsTints[num] * 0.8;
 	allSounds[num].play();
 }
 
 function stop_sound(_this){
 	var num = soundBtns.indexOf(_this);
+	
 	_this.tint = soundBtnsTints[num];
 	allSounds[num].stop(); 
 }
@@ -262,10 +263,6 @@ function loadSounds(){
 	allSounds = [clapSfx, toad1Sfx, toad2Sfx, booSfx];
 }
 
-function converToHex(_color){
-	return _color.toString(16);
-}
-
 function isMobile(){
     return /Mobi|Android/i.test(navigator.userAgent);
 }
@@ -274,8 +271,4 @@ function initPlugIns(){
     try{window.plugins.insomnia.keepAwake();} catch(e){} // keep device awake
     try{StatusBar.hide();} catch(e){} // hide status bar
     try{window.androidVolume.setMusic(80, false);} catch(e){} // change device media volume to maximum
-}
-
-function roundIt(_num){
-	return Math.round(_num * 100) / 100;
 }
