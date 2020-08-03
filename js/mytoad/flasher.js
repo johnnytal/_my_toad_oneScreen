@@ -14,6 +14,10 @@ var flasher = function(game){
 	AccelX = 0;
 	HU_STATE = false;
 	HA_STATE = false;
+	
+	isInfinite = false;
+	isVish = false;
+	isNote = false;
 };
 
 flasher.prototype = {
@@ -32,8 +36,8 @@ flasher.prototype = {
 
     	light_btn = game.add.sprite(137, 41, 'light_btn');
 	    light_btn.inputEnabled = true;
-	    light_btn.events.onInputDown.add(flash, this);
-	    light_btn.events.onInputUp.add(flash, this);
+	    light_btn.events.onInputDown.add(flashIt, this);
+	    light_btn.events.onInputUp.add(flash_off, this);
     	
     	vibrate_btn = game.add.sprite(160, 170, 'vibrate_btn');
 	    vibrate_btn.inputEnabled = true;
@@ -62,13 +66,25 @@ flasher.prototype = {
 	    	soundBtns[s].events.onInputUp.add(stop_sound, this);	
 	 	}
 
+    	inf_btn = game.add.sprite(297, 440, 'inf_btn');
+	    inf_btn.inputEnabled = true;
+	    inf_btn.events.onInputDown.add(toggle_inf, this);
+    	    	
+    	vish_btn = game.add.sprite(297, 497, 'vish_btn');
+	    vish_btn.inputEnabled = true;
+	    vish_btn.events.onInputDown.add(toggle_vish, this);
+	    
+    	note_btn = game.add.sprite(297, 554, 'note_btn');
+	    note_btn.inputEnabled = true;
+	    note_btn.events.onInputDown.add(toggle_note, this);
+
+
     	wiper_btn = game.add.sprite(100, 470, 'empty');
 	    wiper_btn.inputEnabled = true;
-	   // wiper_btn.events.onInputDown.add(toggleVisher, this);
     	wiper_btn.tint = 0xbc85f9;
  
     	wiper = game.add.sprite(0, 0, 'wiper');
-    	wiper.tint = 0xff0042;
+    	wiper.tint = 0xcc2242;
     	wiper.scale.set(0.3, 0.1);
         wiper.y = 536;
         wiper.x = 135;
@@ -107,6 +123,39 @@ flasher.prototype = {
 		}
     }     
 };
+
+function toggle_inf(_this){
+	if (!isInfinite){
+		_this.tint = 0xffffff * 0.6;
+		isInfinite = true;
+	}
+	else{
+		_this.tint = 0xffffff;
+		isInfinite = false;
+	}
+}
+
+function toggle_vish(_this){
+	if (!isVish){
+		_this.tint = 0xffffff * 0.6;
+		isVish = true;
+	}
+	else{
+		_this.tint = 0xffffff;
+		isVish = false;
+	}
+}
+
+function toggle_note(_this){
+	if (!isNote){
+		_this.tint = 0xffffff * 0.6;
+		isNote = true;
+	}
+	else{
+		_this.tint = 0xffffff;
+		isNote = false;
+	}
+}
 
 function readVisherAccel(event){
 	if (visherOn){
@@ -165,87 +214,139 @@ function distributeEmpty(){
 }
 
 function goVibrate(_this){
-	if (isMobile()) navigator.vibrate(120000);
-	_this.tint = TINT_COLOR;
-	game.camera.shake(0.003, 120000);
+	if (isInfinite && _this.tint == TINT_COLOR){
+		if (isMobile()) navigator.vibrate(0);		
+		_this.tint = 0xffffff;
+		game.camera.shake(0, 0);
+	}
+	else{
+		if (isMobile()) navigator.vibrate(120000);
+		_this.tint = TINT_COLOR;
+		game.camera.shake(0.003, 120000);
+	}
 }
 
 function stopVibrate(_this){
-	if (isMobile()) navigator.vibrate(0);		
-	_this.tint = 0xffffff;
-	game.camera.shake(0, 0);	
+	if (!isInfinite){
+		if (isMobile()) navigator.vibrate(0);		
+		_this.tint = 0xffffff;
+		game.camera.shake(0, 0);	
+	}
 }
 
 function goFlicker(_this){
-	_this.tint = TINT_COLOR;
-
-	flicker_interval = setInterval(function(){
+	if (isInfinite && flicker_interval != null){
+		_this.tint = 0xffffff;
+		
+		if (flicker_interval != null){
+			clearInterval(flicker_interval);
+			flicker_interval = null;
+		}
+		
 		if (window.plugins.flashlight.isSwitchedOn()){
 			window.plugins.flashlight.switchOff();
-			navigator.vibrate(0);
-			game.camera.shake(0, 0);
 		}
-		else{
-			window.plugins.flashlight.switchOn();
-			navigator.vibrate(flickingRate);
-			game.camera.flash(0xffffff, flickingRate);
-			game.camera.shake(0.003, flickingRate);
-		}
-	}, flickingRate);
+	}
+	else{
+		_this.tint = TINT_COLOR;
+	
+		flicker_interval = setInterval(function(){
+			if (window.plugins.flashlight.isSwitchedOn()){
+				window.plugins.flashlight.switchOff();
+				navigator.vibrate(0);
+				game.camera.shake(0, 0);
+			}
+			else{
+				window.plugins.flashlight.switchOn();
+				navigator.vibrate(flickingRate);
+				game.camera.flash(0xffffff, flickingRate);
+				game.camera.shake(0.004, flickingRate);
+			}
+		}, flickingRate);
+	}
 }
 
 function stopFlicker(_this){
-	_this.tint = 0xffffff;
-	
-	if (flicker_interval != null){
-		clearInterval(flicker_interval);
-		flicker_interval = null;
-	}
-	
-	if (window.plugins.flashlight.isSwitchedOn()){
-		window.plugins.flashlight.switchOff();
+	if (!isInfinite){
+		_this.tint = 0xffffff;
+		
+		if (flicker_interval != null){
+			clearInterval(flicker_interval);
+			flicker_interval = null;
+		}
+		
+		if (window.plugins.flashlight.isSwitchedOn()){
+			window.plugins.flashlight.switchOff();
+		}
 	}
 }
 
 function play_sound(_this){	
 	var num = soundBtns.indexOf(_this);
+		
+	if (isInfinite && allSounds[num].isPlaying){
+		_this.tint = soundBtnsTints[num];
+		allSounds[num].stop(); 	
+	}
 	
-	_this.tint =  soundBtnsTints[num] * 0.8;
-	allSounds[num].play();
+	else{
+		_this.tint =  soundBtnsTints[num] * 0.8;
+		allSounds[num].play();
+	}
 }
 
 function stop_sound(_this){
-	var num = soundBtns.indexOf(_this);
-	
-	_this.tint = soundBtnsTints[num];
-	allSounds[num].stop(); 
+	if (!isInfinite){
+		var num = soundBtns.indexOf(_this);
+		
+		_this.tint = soundBtnsTints[num];
+		allSounds[num].stop(); 
+	}
 }
 
-function flash(_this){
-	if (!flash_on){
-		if (isMobile()){
-			window.plugins.flashlight.switchOn();
-		}
-		
-		_this.tint = TINT_COLOR;
-		flash_on = true;
-		
-		value = 0;
-	    
-	    game.add.tween(bgW).to( { alpha: 1 }, 200, "Linear", true);
-	    game.add.tween(bgB).to( { alpha: 0 }, 0, "Linear", true);
-  	    
-	}
-	else{
+function flashIt(_this){
+	if (isInfinite && flash_on){
 		if (isMobile()){
 			window.plugins.flashlight.switchOff();
 		}
 		
 		value = 255;
-
+	
 	    game.add.tween(bgW).to( { alpha: 0 }, 200, "Linear", true);
 	    game.add.tween(bgB).to( { alpha: 1 }, 0, "Linear", true);
+	
+		_this.tint = 0xffffff;
+		flash_on = false;
+	}
+	else{
+		if (!flash_on){
+			if (isMobile()){
+				window.plugins.flashlight.switchOn();
+			}
+			
+			_this.tint = TINT_COLOR;
+			flash_on = true;
+			
+			value = 0;
+		    
+		    game.add.tween(bgW).to( { alpha: 1 }, 200, "Linear", true);
+		    game.add.tween(bgB).to( { alpha: 0 }, 0, "Linear", true);
+	  	    
+		}
+	}
+}
 
+function flash_off(_this){
+	if (!isInfinite){
+		if (isMobile()){
+			window.plugins.flashlight.switchOff();
+		}
+		
+		value = 255;
+	
+	    game.add.tween(bgW).to( { alpha: 0 }, 200, "Linear", true);
+	    game.add.tween(bgB).to( { alpha: 1 }, 0, "Linear", true);
+	
 		_this.tint = 0xffffff;
 		flash_on = false;
 	}
@@ -255,12 +356,16 @@ function flash(_this){
 
 function loadSounds(){   
 	sound_logo = game.add.audio('sound_logo');
-	clapSfx = game.add.audio('clapSfx', 1, true);
-	toad1Sfx = game.add.audio('toad1Sfx', 1, true);
-	toad2Sfx = game.add.audio('toad2Sfx', 1, true);
-	booSfx = game.add.audio('booSfx', 1, true);
 	
-	allSounds = [clapSfx, toad1Sfx, toad2Sfx, booSfx];
+	toad1Sfx = game.add.audio('toad1Sfx', 1, false);
+	toad2Sfx = game.add.audio('toad2Sfx', 1, false);
+	
+	clapSfx = game.add.audio('clapSfx', 1, true);
+	booSfx = game.add.audio('booSfx', 1, true);
+	cheerSfx = game.add.audio('cheerSfx', 1, true);
+	laughSfx = game.add.audio('laughSfx', 1, true);
+	
+	allSounds = [clapSfx, cheerSfx, laughSfx, booSfx];
 }
 
 function isMobile(){
