@@ -27,6 +27,9 @@ preloader.prototype = {
         game.load.audio('booSfx', 'assets/mytoad/audio/boo.mp3');
         game.load.audio('cheerSfx', 'assets/mytoad/audio/cheer.mp3');
         game.load.audio('laughSfx', 'assets/mytoad/audio/laugh.mp3');
+        
+        game.load.audio('rainstick1', 'assets/mytoad/audio/rainstick1.mp3');
+        game.load.audio('rainstick2', 'assets/mytoad/audio/rainstick2.mp3');
     },
     
     create: function(){

@@ -7,9 +7,7 @@ var flasher = function(game){
 	circlesArray = [];
 	soundBtns = [];
 	soundBtnsTints = [0x79d0e2, 0x1ed760, 0xc3e347, 0xff82d4];
-	
-	visherOn = true;
-	
+
 	GO_ANGLE = 25;
 	AccelX = 0;
 	HU_STATE = false;
@@ -104,22 +102,24 @@ flasher.prototype = {
     	soundToPlay = sound_logo.play();
     }, 
     update: function(){
-    	if (wiper.angle < -GO_ANGLE && !HU_STATE){
-			toad1Sfx.play();
-			
-	    	wiper_btn.tint = 0x79d0e2;
-
-			HA_STATE = false;
-			HU_STATE = true;
-		}
-    	
-    	else if (wiper.angle > GO_ANGLE && !HA_STATE){    		
-			toad2Sfx.play();
-			
-	    	wiper_btn.tint = 0x35ff00;
-
-			HA_STATE = true;
-			HU_STATE = false;
+    	if (isVish){
+	    	if (wiper.angle < -GO_ANGLE && !HU_STATE){
+				toad1Sfx.play();
+				
+		    	wiper_btn.tint = 0x79d0e2;
+	
+				HA_STATE = false;
+				HU_STATE = true;
+			}
+	    	
+	    	else if (wiper.angle > GO_ANGLE && !HA_STATE){    		
+				toad2Sfx.play();
+				
+		    	wiper_btn.tint = 0x35ff00;
+	
+				HA_STATE = true;
+				HU_STATE = false;
+			}
 		}
     }     
 };
@@ -158,7 +158,7 @@ function toggle_note(_this){
 }
 
 function readVisherAccel(event){
-	if (visherOn){
+	if (isVish){
 		AccelX = event.accelerationIncludingGravity.x;
 
 		wiper.angle = AccelX * 3;
@@ -169,6 +169,32 @@ function readVisherAccel(event){
 		
 		bgHot.alpha = alphaVal - 0.2;
 		bgCold.alpha = 1 - alphaVal - 0.2;
+	}
+	else{
+		AccelY = event.accelerationIncludingGravity.y;
+		
+		if (AccelY < -1){
+			if (!rainstick1Sfx.isPlaying){
+				rainstick1Sfx.play();
+			}
+			rainstick1Sfx._sound.playbackRate.value = Math.abs(AccelY) / 10;
+		}
+		
+		else if (AccelY > 1){
+			if (!rainstick2Sfx.isPlaying){
+				rainstick2Sfx.play();
+			}
+			rainstick2Sfx._sound.playbackRate.value = Math.abs(AccelY) / 10;
+		}
+
+		wiper.angle = AccelY * 3;
+
+		var alphaVal = (AccelY + 10) / 20;
+		if (alphaVal < 0) alphaVal = 0;
+		else if (alphaVal > 1) alphaVal = 1;
+		
+		bgHot.alpha = alphaVal - 0.2;
+		bgCold.alpha = 1 - alphaVal - 0.2;	
 	}
 }
 
@@ -364,6 +390,9 @@ function loadSounds(){
 	booSfx = game.add.audio('booSfx', 1, true);
 	cheerSfx = game.add.audio('cheerSfx', 1, true);
 	laughSfx = game.add.audio('laughSfx', 1, true);
+	
+	rainstick1Sfx = game.add.audio('rainstick1', 1, false);
+	rainstick2Sfx = game.add.audio('rainstick2', 1, false);
 	
 	allSounds = [clapSfx, cheerSfx, laughSfx, booSfx];
 }
