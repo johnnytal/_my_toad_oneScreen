@@ -10,8 +10,11 @@ var flasher = function(game){
 
 	GO_ANGLE = 25;
 	AccelX = 0;
+	
 	HU_STATE = false;
 	HA_STATE = false;
+	
+	MIDDLE_STATE = false;
 	
 	isInfinite = false;
 	isVish = false;
@@ -173,18 +176,24 @@ function readVisherAccel(event){
 	else{
 		AccelY = event.accelerationIncludingGravity.y;
 		
-		if (AccelY < -1){
-			if (!rainstick1Sfx.isPlaying){
+		if (AccelY < -5){
+			if (!rainstick1Sfx.isPlaying && MIDDLE_STATE){
 				rainstick1Sfx.play();
 			}
 			rainstick1Sfx._sound.playbackRate.value = Math.abs(AccelY) / 10;
+			MIDDLE_STATE = false;
 		}
 		
-		else if (AccelY > 1){
-			if (!rainstick2Sfx.isPlaying){
+		else if (AccelY > 5){
+			if (!rainstick2Sfx.isPlaying && MIDDLE_STATE){
 				rainstick2Sfx.play();
 			}
 			rainstick2Sfx._sound.playbackRate.value = Math.abs(AccelY) / 10;
+			MIDDLE_STATE = false;
+		}
+		
+		else if (AccelY > -2  && AccelY < 2){
+			MIDDLE_STATE = true;
 		}
 
 		wiper.angle = AccelY * 3;
